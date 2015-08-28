@@ -1,0 +1,31 @@
+71a72
+> ;  MODEL_BLAZE= -- Tapered model of the object profile for blaze extraction
+90a92
+> ;   10-Nov-2011 ALM - added MODEL_BLAZE optional output
+124c126
+<                      MODEL_IVAR=model_ivar, $
+---
+>                      MODEL_IVAR=model_ivar, MODEL_BLAZE=model_blaze, $
+235a238
+>   model_blaze   = ordermask*0.0
+857a861
+>      blaze_profile = final_obj_profile
+964a969,984
+>          ;; ALM force the blaze profile to zero as it approaches the order edge to avoid pixel stepping artifacts
+>          f0_r = where(x GT profile_rwhm, f0_rn)
+>          f0_l = where(x LT profile_lwhm, f0_ln)
+>          force0_ord = 3
+>          force0_width = 0.8
+>          if (f0_rn GT 0) then begin
+>              force0_m = (1.0-(abs(dindgen(f0_rn)/f0_rn)/force0_width)^force0_ord)^3
+>              blaze_profile[xs[f0_r]] = force0_m * blaze_profile[xs[f0_r]] > 0
+>          endif
+>          if (f0_ln GT 0) then begin
+>              force0_m = (1.0-(abs(reverse(dindgen(f0_ln))/f0_ln)/force0_width)^force0_ord)^3
+>              blaze_profile[xs[f0_l]] = force0_m * blaze_profile[xs[f0_l]] > 0
+>          endif
+>          
+>          blaze_profile = blaze_profile / slit_proj * 2.
+> 
+1100a1121
+>      model_blaze[inorder]   =  blaze_profile
